@@ -1,0 +1,123 @@
+# Docker Compose Override for Ghost Infrastructure Integration
+# This file modifies MapPalette's docker-compose.yml for deployment behind root Caddy
+
+services:
+  # Disable MapPalette's internal Caddy (root Caddy handles all routing)
+  caddy:
+    deploy:
+      replicas: 0
+
+  # ====================
+  # INFRASTRUCTURE SERVICES
+  # Remove external port exposure, use internal-only communication
+  # ====================
+
+  supabase-db:
+    ports: []
+    expose:
+      - "5432"
+
+  supabase-storage:
+    ports: []
+    expose:
+      - "5000"
+
+  supabase-kong:
+    ports: []
+    expose:
+      - "8000"
+
+  supabase-studio:
+    ports: []
+    expose:
+      - "3000"
+
+  supabase-meta:
+    ports: []
+    expose:
+      - "8080"
+
+  redis:
+    ports: []
+    expose:
+      - "6379"
+
+  # ====================
+  # ATOMIC MICROSERVICES
+  # ====================
+
+  user-service:
+    ports: []
+    expose:
+      - "5000"
+
+  post-service:
+    ports: []
+    expose:
+      - "5000"
+
+  interaction-service:
+    ports: []
+    expose:
+      - "5000"
+
+  follow-service:
+    ports: []
+    expose:
+      - "5000"
+
+  # ====================
+  # COMPOSITE MICROSERVICES
+  # ====================
+
+  feed-service:
+    ports: []
+    expose:
+      - "5000"
+
+  profile-service:
+    ports: []
+    expose:
+      - "5000"
+
+  social-interaction-service:
+    ports: []
+    expose:
+      - "5000"
+
+  explore-routes-service:
+    ports: []
+    expose:
+      - "5000"
+
+  leaderboard-service:
+    ports: []
+    expose:
+      - "8080"
+
+  user-discovery-service:
+    ports: []
+    expose:
+      - "5000"
+
+  # ====================
+  # FRONTEND
+  # Connect to ghost_network for root Caddy access
+  # ====================
+
+  frontend:
+    ports: []
+    expose:
+      - "80"
+    networks:
+      - mappalette-network  # Keep internal network for backend communication
+      - ghost_network       # Add external network for root Caddy
+
+# ====================
+# NETWORKS
+# ====================
+
+networks:
+  # Connect to root Ghost network
+  ghost_network:
+    external: true
