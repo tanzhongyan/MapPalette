@@ -6,7 +6,10 @@
 import axios from '@/lib/axios';
 import followService from './followService';
 
-const SOCIAL_INTERACTION_SERVICE_URL = import.meta.env.VITE_SOCIAL_INTERACTION_URL || 'http://localhost:3005';
+const SOCIAL_INTERACTION_SERVICE_URL = import.meta.env.VITE_SOCIAL_INTERACTION_URL;
+if (!SOCIAL_INTERACTION_SERVICE_URL) {
+  throw new Error('VITE_SOCIAL_INTERACTION_URL environment variable is required');
+}
 
 class SocialInteractionService {
   // ==========================================

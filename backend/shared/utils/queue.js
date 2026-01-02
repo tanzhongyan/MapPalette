@@ -12,8 +12,12 @@ const { renderMapFromPost } = require('./googleMapsRenderer');
 const { uploadRouteImage, uploadOptimizedRouteImage } = require('./storageService');
 
 // Redis connection for Bull
+if (!process.env.REDIS_URL) {
+  throw new Error('REDIS_URL environment variable is required');
+}
+
 const redisConfig = {
-  redis: process.env.REDIS_URL || 'redis://localhost:6379',
+  redis: process.env.REDIS_URL,
   defaultJobOptions: {
     attempts: 3,
     backoff: {

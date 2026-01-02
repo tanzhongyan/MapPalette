@@ -93,10 +93,8 @@ public class UserDiscoveryController {
         healthResponse.put("uptime", getUptimeInSeconds());
         
         Map<String, String> dependencies = new HashMap<>();
-        dependencies.put("user-service", System.getenv("USER_SERVICE_URL") != null ? 
-            System.getenv("USER_SERVICE_URL") : "http://localhost:3001/api/users");
-        dependencies.put("follow-service", System.getenv("FOLLOW_SERVICE_URL") != null ? 
-            System.getenv("FOLLOW_SERVICE_URL") : "http://localhost:3007/api/follow");
+        dependencies.put("user-service", System.getenv("USER_SERVICE_URL"));
+        dependencies.put("follow-service", System.getenv("FOLLOW_SERVICE_URL"));
         healthResponse.put("dependencies", dependencies);
         
         return ResponseEntity.ok(healthResponse);

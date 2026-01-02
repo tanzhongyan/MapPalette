@@ -16,8 +16,12 @@ const STORAGE_CONFIG = {
   supabaseKey: process.env.SUPABASE_SERVICE_KEY,
   storageUrl: process.env.STORAGE_URL || 'http://supabase-storage:5000',
   // Public URL that browsers can access (via Caddy proxy)
-  publicBaseUrl: process.env.SUPABASE_PUBLIC_URL || 'http://localhost:8000',
+  publicBaseUrl: process.env.SUPABASE_PUBLIC_URL,
 };
+
+if (!STORAGE_CONFIG.publicBaseUrl) {
+  throw new Error('SUPABASE_PUBLIC_URL environment variable is required');
+}
 
 console.log('[STORAGE_SERVICE] Configured with internal URL:', STORAGE_CONFIG.supabaseUrl);
 console.log('[STORAGE_SERVICE] Public base URL:', STORAGE_CONFIG.publicBaseUrl);

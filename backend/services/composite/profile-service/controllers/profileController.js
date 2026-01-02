@@ -1,10 +1,15 @@
 const axios = require('axios');
 
-// Service urls
-const POST_SERVICE_BASE = process.env.POST_SERVICE_URL || 'http://localhost:3002';
-const USER_SERVICE_BASE = process.env.USER_SERVICE_URL || 'http://localhost:3001';
-const INTERACTION_SERVICE_BASE = process.env.INTERACTION_SERVICE_URL || 'http://localhost:3003';
-const FOLLOW_SERVICE_BASE = process.env.FOLLOW_SERVICE_URL || 'http://localhost:3007';
+// Service urls - must be configured via environment variables
+if (!process.env.POST_SERVICE_URL) throw new Error('POST_SERVICE_URL is required');
+if (!process.env.USER_SERVICE_URL) throw new Error('USER_SERVICE_URL is required');
+if (!process.env.INTERACTION_SERVICE_URL) throw new Error('INTERACTION_SERVICE_URL is required');
+if (!process.env.FOLLOW_SERVICE_URL) throw new Error('FOLLOW_SERVICE_URL is required');
+
+const POST_SERVICE_BASE = process.env.POST_SERVICE_URL;
+const USER_SERVICE_BASE = process.env.USER_SERVICE_URL;
+const INTERACTION_SERVICE_BASE = process.env.INTERACTION_SERVICE_URL;
+const FOLLOW_SERVICE_BASE = process.env.FOLLOW_SERVICE_URL;
 
 // full service URLs with API paths
 const POST_SERVICE_URL = `${POST_SERVICE_BASE}/api/posts`;

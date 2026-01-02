@@ -12,7 +12,10 @@ export function useUser() {
     error.value = null
 
     try {
-      const USER_SERVICE_URL = import.meta.env.VITE_USER_SERVICE_URL || 'http://localhost:3001'
+      const USER_SERVICE_URL = import.meta.env.VITE_USER_SERVICE_URL;
+      if (!USER_SERVICE_URL) {
+        throw new Error('VITE_USER_SERVICE_URL environment variable is required');
+      }
       const response = await fetch(`${USER_SERVICE_URL}/api/users/${userId}`)
 
       if (!response.ok) {
@@ -39,7 +42,10 @@ export function useUser() {
       const { getToken } = useAuth()
       const token = await getToken()
 
-      const USER_SERVICE_URL = import.meta.env.VITE_USER_SERVICE_URL || 'http://localhost:3001'
+      const USER_SERVICE_URL = import.meta.env.VITE_USER_SERVICE_URL;
+      if (!USER_SERVICE_URL) {
+        throw new Error('VITE_USER_SERVICE_URL environment variable is required');
+      }
       const response = await fetch(`${USER_SERVICE_URL}/api/users/${userId}`, {
         method: 'PUT',
         headers: {

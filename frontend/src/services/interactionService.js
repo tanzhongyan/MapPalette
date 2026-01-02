@@ -1,6 +1,9 @@
 import axios from '@/lib/axios';
 
-const INTERACTION_SERVICE_URL = import.meta.env.VITE_INTERACTION_SERVICE_URL || 'http://localhost:3003';
+const INTERACTION_SERVICE_URL = import.meta.env.VITE_INTERACTION_SERVICE_URL;
+if (!INTERACTION_SERVICE_URL) {
+  throw new Error('VITE_INTERACTION_SERVICE_URL environment variable is required');
+}
 
 class InteractionService {
   // Like/Unlike operations

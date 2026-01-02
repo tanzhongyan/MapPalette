@@ -6,13 +6,12 @@ import { createClient } from '@supabase/supabase-js'
 const getSupabaseUrl = () => {
   const configuredUrl = import.meta.env.VITE_SUPABASE_URL
   
-  // If explicitly configured, use that
-  if (configuredUrl) {
-    return configuredUrl
+  // Require VITE_SUPABASE_URL to be explicitly set
+  if (!configuredUrl) {
+    throw new Error('VITE_SUPABASE_URL environment variable is required')
   }
   
-  // Default fallback for development
-  return 'http://localhost:8000'
+  return configuredUrl
 }
 
 const supabaseUrl = getSupabaseUrl()

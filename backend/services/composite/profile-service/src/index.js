@@ -24,10 +24,10 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     uptime: Math.floor((Date.now() - startTime) / 1000),
     dependencies: {
-      'post-service': process.env.POST_SERVICE_URL || 'http://localhost:3002/api',
-      'user-service': process.env.USER_SERVICE_URL || 'http://localhost:3001/api/users',
-      'interaction-service': process.env.INTERACTION_SERVICE_URL || 'http://localhost:3003/api/interactions',
-      'follow-service': process.env.FOLLOW_SERVICE_URL || 'http://localhost:3006/api/follow'
+      'post-service': process.env.POST_SERVICE_URL,
+      'user-service': process.env.USER_SERVICE_URL,
+      'interaction-service': process.env.INTERACTION_SERVICE_URL,
+      'follow-service': process.env.FOLLOW_SERVICE_URL
     }
   });
 });
