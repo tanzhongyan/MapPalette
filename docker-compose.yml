@@ -776,6 +776,7 @@ services:
 
 networks:
   mappalette-network:
+    name: mappalette-network
     driver: bridge
 
 volumes:
