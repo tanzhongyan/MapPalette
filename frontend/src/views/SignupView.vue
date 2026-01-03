@@ -402,7 +402,8 @@ export default {
           formDataImg.append('profilePicture', profileFile.value)
 
           try {
-            const uploadResponse = await axios.post(`/api/users/upload-profile-picture/${user.id}`, formDataImg, {
+            const USER_SERVICE_URL = import.meta.env.VITE_USER_SERVICE_URL || 'http://localhost:3001';
+            const uploadResponse = await axios.post(`${USER_SERVICE_URL}/api/users/upload-profile-picture/${user.id}`, formDataImg, {
               headers: {
                 'Content-Type': 'multipart/form-data'
               },

@@ -1,6 +1,8 @@
 import axios from '@/lib/axios';
 
-// Use relative URL to go through the Caddy proxy
+const DISCOVERY_SERVICE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
+// Use explicit URL construction for consistency
 // The proxy will route /api/discover/* to the user-discovery-service
 
 export const userDiscoveryService = {
@@ -14,7 +16,7 @@ export const userDiscoveryService = {
    */
   async discoverUsers(userId, limit = 20, offset = 0, suggestionsOnly = false) {
     try {
-      const response = await axios.get(`/api/discover/users/${userId}`, {
+      const response = await axios.get(`${DISCOVERY_SERVICE_URL}/api/discover/users/${userId}`, {
         params: { limit, offset, suggestionsOnly }
       });
       return response.data;
@@ -32,7 +34,7 @@ export const userDiscoveryService = {
    */
   async getSuggestedUsers(userId, limit = 5) {
     try {
-      const response = await axios.get(`/api/discover/users/${userId}/suggestions`, {
+      const response = await axios.get(`${DISCOVERY_SERVICE_URL}/api/discover/users/${userId}/suggestions`, {
         params: { limit }
       });
       return response.data;
@@ -51,7 +53,7 @@ export const userDiscoveryService = {
    */
   async getAllUserData(userId, limit = 20, offset = 0) {
     try {
-      const response = await axios.get(`/api/discover/users/${userId}/all`, {
+      const response = await axios.get(`${DISCOVERY_SERVICE_URL}/api/discover/users/${userId}/all`, {
         params: { 
           friendsLimit: 100,
           othersLimit: limit

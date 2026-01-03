@@ -23,8 +23,9 @@ export const initAuthListener = () => {
         // Fetch user profile from user-service microservice via Caddy proxy
         try {
           const token = currentSession.access_token
+          const USER_SERVICE_URL = import.meta.env.VITE_USER_SERVICE_URL || 'http://localhost:3001';
 
-          const response = await fetch(`/api/users/${currentSession.user.id}`, {
+          const response = await fetch(`${USER_SERVICE_URL}/api/users/${currentSession.user.id}`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }

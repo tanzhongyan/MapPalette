@@ -308,13 +308,20 @@ export default {
 
     const updateUsername = async () => {
       try {
-        await axios.put(
-          `/api/users/update/username/${currentUser.value.id}`,
-          { username: userProfile.value.username }
+        const USER_SERVICE_URL = import.meta.env.VITE_USER_SERVICE_URL || 'http://localhost:3001';
+        const payload = { username: userProfile.value.username };
+        console.log('[updateUsername] Sending payload:', payload);
+        console.log('[updateUsername] URL:', `${USER_SERVICE_URL}/api/users/update/username/${currentUser.value.id}`);
+        
+        const response = await axios.put(
+          `${USER_SERVICE_URL}/api/users/update/username/${currentUser.value.id}`,
+          payload
         );
+        console.log('[updateUsername] Response:', response.data);
         setAlert('success', 'Username updated successfully!');
       } catch (error) {
         console.error('Error updating username:', error);
+        console.error('Error response:', error.response?.data);
         setAlert('error', 'An error occurred while updating username.');
       }
     };
@@ -343,8 +350,9 @@ export default {
         const formData = new FormData();
         formData.append('profilePicture', file);
 
+        const USER_SERVICE_URL = import.meta.env.VITE_USER_SERVICE_URL || 'http://localhost:3001';
         const uploadResponse = await axios.post(
-          `/api/users/upload-profile-picture/${currentUser.value.id}`,
+          `${USER_SERVICE_URL}/api/users/upload-profile-picture/${currentUser.value.id}`,
           formData,
           {
             headers: {
@@ -415,8 +423,9 @@ export default {
         const formData = new FormData();
         formData.append('coverPhoto', file);
 
-        const uploadResponse = await axios.post(
-          `/api/users/upload-cover-photo/${currentUser.value.id}`,
+        const USER_SERVICE_URL = import.meta.env.VITE_USER_SERVICE_URL || 'http://localhost:3001';
+        const response = await axios.post(
+          `${USER_SERVICE_URL}/api/users/upload-cover-photo/${currentUser.value.id}`,
           formData,
           {
             headers: { 'Content-Type': 'multipart/form-data' },
@@ -424,8 +433,8 @@ export default {
           }
         );
 
-        if (uploadResponse.data && uploadResponse.data.url) {
-          userProfile.value.coverPhoto = uploadResponse.data.url;
+        if (response.data && response.data.url) {
+          userProfile.value.coverPhoto = response.data.url;
           setAlert('success', 'Cover photo updated successfully!');
         } else {
           setAlert('error', 'Failed to upload cover photo. Please try again.');
@@ -439,7 +448,8 @@ export default {
 
     const removeCoverPhoto = async () => {
       try {
-        await axios.put(`/api/users/update/coverPhoto/${currentUser.value.id}`, { coverPhoto: null });
+        const USER_SERVICE_URL = import.meta.env.VITE_USER_SERVICE_URL || 'http://localhost:3001';
+        await axios.put(`${USER_SERVICE_URL}/api/users/update/coverPhoto/${currentUser.value.id}`, { coverPhoto: null });
         userProfile.value.coverPhoto = '';
         setAlert('success', 'Cover photo removed successfully.');
       } catch (error) {
@@ -450,7 +460,8 @@ export default {
 
     const saveProfileInfo = async () => {
       try {
-        await axios.put(`/api/users/${currentUser.value.id}/profile-info`, {
+        const USER_SERVICE_URL = import.meta.env.VITE_USER_SERVICE_URL || 'http://localhost:3001';
+        await axios.put(`${USER_SERVICE_URL}/api/users/${currentUser.value.id}/profile-info`, {
           bio: userProfile.value.bio,
           location: userProfile.value.location,
           birthday: userProfile.value.birthday,
@@ -486,7 +497,8 @@ export default {
     const initUserData = async () => {
       if (currentUser.value) {
         try {
-          const response = await axios.get(`/api/users/${currentUser.value.id}`);
+          const USER_SERVICE_URL = import.meta.env.VITE_USER_SERVICE_URL || 'http://localhost:3001';
+          const response = await axios.get(`${USER_SERVICE_URL}/api/users/${currentUser.value.id}`);
           const userData = response.data;
           
           userProfile.value = {
@@ -518,8 +530,9 @@ export default {
 
     const updateUserProfilePicture = async (imageUrl) => {
       try {
+        const USER_SERVICE_URL = import.meta.env.VITE_USER_SERVICE_URL || 'http://localhost:3001';
         await axios.put(
-          `/api/users/update/profilePicture/${currentUser.value.id}`,
+          `${USER_SERVICE_URL}/api/users/update/profilePicture/${currentUser.value.id}`,
           { profilePicture: imageUrl }
         );
         userProfile.value.avatar = imageUrl;

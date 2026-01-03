@@ -67,7 +67,7 @@ services:
       GOTRUE_API_PORT: 9999
       API_EXTERNAL_URL: ${API_EXTERNAL_URL}
       GOTRUE_DB_DRIVER: postgres
-      GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:${POSTGRES_PASSWORD}@supabase-db:5432/${POSTGRES_DB}
+      GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:${POSTGRES_PASSWORD}@mappalette-supabase-db:5432/${POSTGRES_DB}
       GOTRUE_SITE_URL: ${SITE_URL}
       GOTRUE_URI_ALLOW_LIST: ${ADDITIONAL_REDIRECT_URLS:-}
       GOTRUE_DISABLE_SIGNUP: ${DISABLE_SIGNUP:-false}
@@ -93,7 +93,7 @@ services:
       supabase-db:
         condition: service_healthy
     environment:
-      PGRST_DB_URI: postgres://authenticator:${POSTGRES_PASSWORD}@supabase-db:5432/${POSTGRES_DB}
+      PGRST_DB_URI: postgres://authenticator:${POSTGRES_PASSWORD}@mappalette-supabase-db:5432/${POSTGRES_DB}
       PGRST_DB_SCHEMAS: ${PGRST_DB_SCHEMAS:-public,storage,graphql_public}
       PGRST_DB_ANON_ROLE: anon
       PGRST_JWT_SECRET: ${JWT_SECRET}
@@ -122,7 +122,7 @@ services:
       SERVICE_KEY: ${SUPABASE_SERVICE_KEY}
       POSTGREST_URL: http://supabase-rest:3000
       PGRST_JWT_SECRET: ${JWT_SECRET}
-      DATABASE_URL: postgres://supabase_storage_admin:${POSTGRES_PASSWORD}@supabase-db:5432/${POSTGRES_DB}
+      DATABASE_URL: postgres://supabase_storage_admin:${POSTGRES_PASSWORD}@mappalette-supabase-db:5432/${POSTGRES_DB}
       FILE_SIZE_LIMIT: 52428800
       STORAGE_BACKEND: file
       FILE_STORAGE_BACKEND_PATH: /var/lib/storage
@@ -185,7 +185,7 @@ services:
       SUPABASE_URL: http://supabase-kong:8000
       SUPABASE_PUBLIC_URL: ${SUPABASE_PUBLIC_URL:-http://localhost:8000}
       STUDIO_PG_META_URL: http://supabase-meta:8080
-      POSTGRES_HOST: supabase-db
+      POSTGRES_HOST: mappalette-supabase-db
       POSTGRES_PORT: ${POSTGRES_PORT}
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -284,7 +284,7 @@ services:
       supabase-db:
         condition: service_healthy
     environment:
-      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@supabase-db:5432/${POSTGRES_DB}
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@mappalette-supabase-db:5432/${POSTGRES_DB}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
       - PRISMA_FORCE_NAPI=1
@@ -327,7 +327,7 @@ services:
         echo "Creating storage buckets via database..."
         sleep 3
         
-        psql -h supabase-db -U postgres -d postgres -c "
+        psql -h mappalette-supabase-db -U postgres -d postgres -c "
           INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
           VALUES 
             ('profile-pictures', 'profile-pictures', true, 5242880, ARRAY['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']),
@@ -342,7 +342,7 @@ services:
         echo "Storage buckets created successfully!"
         
         echo "Setting up storage RLS policies..."
-        psql -h supabase-db -U postgres -d postgres -c "
+        psql -h mappalette-supabase-db -U postgres -d postgres -c "
           -- Drop existing policies if they exist
           DROP POLICY IF EXISTS \"Allow public read access for public buckets\" ON storage.objects;
           DROP POLICY IF EXISTS \"Allow authenticated uploads\" ON storage.objects;
@@ -376,7 +376,7 @@ services:
         "
         
         echo "Storage RLS policies created!"
-        psql -h supabase-db -U postgres -d postgres -c "SELECT policyname, cmd, roles FROM pg_policies WHERE schemaname = 'storage' AND tablename = 'objects';"
+        psql -h mappalette-supabase-db -U postgres -d postgres -c "SELECT policyname, cmd, roles FROM pg_policies WHERE schemaname = 'storage' AND tablename = 'objects';"
 
   # ====================
   # ATOMIC SERVICES
@@ -709,9 +709,13 @@ services:
         - VITE_SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
         # API URLs - Core Services (use Caddy proxy instead of direct service ports)
         - VITE_API_URL=${VITE_API_URL:-http://localhost}
-        - VITE_FEED_SERVICE_URL=${VITE_FEED_SERVICE_URL:-http://localhost/api/feed}
-        - VITE_USER_SERVICE_URL=${VITE_USER_SERVICE_URL:-http://localhost/api/users}
-        - VITE_POST_SERVICE_URL=${VITE_POST_SERVICE_URL:-http://localhost/api/posts}
+        - VITE_FEED_SERVICE_URL=${VITE_FEED_SERVICE_URL:-http://localhost}
+        - VITE_USER_SERVICE_URL=${VITE_USER_SERVICE_URL:-http://localhost}
+        - VITE_POST_SERVICE_URL=${VITE_POST_SERVICE_URL:-http://localhost}
+        - VITE_INTERACTION_SERVICE_URL=${VITE_INTERACTION_SERVICE_URL:-http://localhost}
+        - VITE_FOLLOW_SERVICE_URL=${VITE_FOLLOW_SERVICE_URL:-http://localhost}
+        - VITE_SOCIAL_INTERACTION_URL=${VITE_SOCIAL_INTERACTION_URL:-http://localhost}
+        - VITE_EXPLORE_ROUTES_URL=${VITE_EXPLORE_ROUTES_URL:-http://localhost}
         # Google Maps (both with and without VITE_ prefix)
         - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
         - GOOGLE_MAPS_MAP_ID=${GOOGLE_MAPS_MAP_ID}

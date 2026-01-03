@@ -347,13 +347,13 @@ ON CONFLICT (id) DO NOTHING;
 -- RLS Policies for Storage
 -- ============================================
 -- Allow authenticated uploads to route-images bucket
-DO \$\$
+DO $$
 BEGIN
     IF EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow authenticated uploads to route-images' AND tablename = 'objects' AND schemaname = 'storage') THEN
         DROP POLICY "Allow authenticated uploads to route-images" ON storage.objects;
     END IF;
 END
-\$\$;
+$$;
 
 CREATE POLICY "Allow authenticated uploads to route-images" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'route-images');
 

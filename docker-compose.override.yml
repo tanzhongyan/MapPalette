@@ -117,7 +117,10 @@ services:
 # NETWORKS
 # ====================
 
-networks:
+networks:  
+  # Use the network created by Ghost
+  mappalette-network:
+    external: true
   # Connect to root Ghost network
   ghost_network:
     external: true

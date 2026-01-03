@@ -1,5 +1,7 @@
 import axios from '@/lib/axios';
 
+const LEADERBOARD_SERVICE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 class LeaderboardService {
   /**
    * Get full leaderboard
@@ -7,7 +9,7 @@ class LeaderboardService {
    */
   async getLeaderboard() {
     try {
-      const response = await axios.get('/api/leaderboard/');
+      const response = await axios.get(`${LEADERBOARD_SERVICE_URL}/api/leaderboard/`);
       return response.data.leaderboard || [];
     } catch (error) {
       console.error('Error fetching leaderboard:', error);
@@ -22,7 +24,7 @@ class LeaderboardService {
    */
   async getUserRank(userId) {
     try {
-      const response = await axios.get(`/api/leaderboard/user/${userId}`);
+      const response = await axios.get(`${LEADERBOARD_SERVICE_URL}/api/leaderboard/user/${userId}`);
       return response.data;
     } catch (error) {
       if (error.response?.status === 404) {
@@ -40,7 +42,7 @@ class LeaderboardService {
    */
   async getTopUsers(limit = 10) {
     try {
-      const response = await axios.get(`/api/leaderboard/top/${limit}`);
+      const response = await axios.get(`${LEADERBOARD_SERVICE_URL}/api/leaderboard/top/${limit}`);
       return response.data.leaderboard || [];
     } catch (error) {
       console.error('Error fetching top users:', error);

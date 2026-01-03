@@ -146,7 +146,8 @@ export default {
 
     const refreshUserData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_USER_SERVICE_URL || 'http://localhost:3001/api'}/users/${currentUser.value.id}`);
+        const USER_SERVICE_URL = import.meta.env.VITE_USER_SERVICE_URL || 'http://localhost:3001';
+        const response = await axios.get(`${USER_SERVICE_URL}/api/users/${currentUser.value.id}`);
         if (response.data) {
           window.currentUser = response.data;
         }

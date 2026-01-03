@@ -175,7 +175,7 @@ export default {
         // Call the post service API (axios already has JWT interceptor)
         const POST_SERVICE_URL = import.meta.env.VITE_POST_SERVICE_URL || 'http://localhost:3002';
         const response = await axios.post(
-          `${POST_SERVICE_URL}/api/create/${currentUser.value.id}`,
+          `${POST_SERVICE_URL}/api/posts/create/${currentUser.value.id}`,
           postDataWithUsername
         );
 

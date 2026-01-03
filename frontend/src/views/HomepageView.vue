@@ -242,7 +242,8 @@ export default {
     // Fetch platform stats for hero section
     const fetchPlatformStats = async () => {
       try {
-        const response = await axios.get('/api/users/stats/platform')
+        const USER_SERVICE_URL = import.meta.env.VITE_USER_SERVICE_URL || 'http://localhost:3001';
+        const response = await axios.get(`${USER_SERVICE_URL}/api/users/stats/platform`)
         const stats = response.data
         
         // Format numbers nicely (e.g., 1500 -> 1.5k)
