@@ -43,6 +43,7 @@ services:
       - supabase-db-data:/var/lib/postgresql/data
     networks:
       - mappalette-network
+      - ghost_network
     command:
       - postgres
       - -c
@@ -84,6 +85,7 @@ services:
       GOTRUE_EXTERNAL_CORS_ALLOWED_HEADERS: 'Accept, Accept-Version, Authorization, Content-Length, Content-Type, Date, Origin, X-Auth-Token, X-Client-Info, X-Requested-With, apikey, x-client-info, x-supabase-api-version'
     networks:
       - mappalette-network
+      - ghost_network
 
   supabase-rest:
     container_name: mappalette-supabase-rest
@@ -100,6 +102,7 @@ services:
       PGRST_DB_USE_LEGACY_GUCS: 'false'
     networks:
       - mappalette-network
+      - ghost_network
 
   supabase-storage:
     container_name: mappalette-supabase-storage
@@ -137,6 +140,7 @@ services:
       - supabase-storage-data:/var/lib/storage
     networks:
       - mappalette-network
+      - ghost_network
 
   imgproxy:
     container_name: mappalette-imgproxy
@@ -156,6 +160,7 @@ services:
       - supabase-storage-data:/var/lib/storage:ro
     networks:
       - mappalette-network
+      - ghost_network
 
   supabase-kong:
     container_name: mappalette-supabase-kong
@@ -173,6 +178,7 @@ services:
       - ./backend/db/kong.yml:/usr/local/kong/config/kong.yml:ro
     networks:
       - mappalette-network
+      - ghost_network
 
   supabase-studio:
     container_name: mappalette-supabase-studio
@@ -216,6 +222,7 @@ services:
         condition: service_healthy
     networks:
       - mappalette-network
+      - ghost_network
 
   supabase-meta:
     container_name: mappalette-supabase-meta
@@ -245,6 +252,7 @@ services:
       CRYPTO_KEY: ${PG_META_CRYPTO_KEY}
     networks:
       - mappalette-network
+      - ghost_network
     ports:
       - "8082:8080" # Exposing meta for debugging
 
@@ -267,6 +275,7 @@ services:
       - redis-data:/data
     networks:
       - mappalette-network
+      - ghost_network
     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
 
   # ====================
@@ -292,6 +301,7 @@ services:
       - .env
     networks:
       - mappalette-network
+      - ghost_network
     volumes:
       - prisma-client-data:/app/node_modules/.prisma
     working_dir: /app
@@ -321,6 +331,7 @@ services:
       - PGPASSWORD=${POSTGRES_PASSWORD}
     networks:
       - mappalette-network
+      - ghost_network
     entrypoint: ["/bin/sh", "-c"]
     command:
       - |
@@ -410,6 +421,7 @@ services:
       - .env
     networks:
       - mappalette-network
+      - ghost_network
     volumes:
       - prisma-client-data:/app/node_modules/.prisma
     working_dir: /app/services/atomic/user-service
@@ -440,6 +452,7 @@ services:
       - INTERNAL_SERVICE_KEY=${INTERNAL_SERVICE_KEY}
     networks:
       - mappalette-network
+      - ghost_network
     volumes:
       - prisma-client-data:/app/node_modules/.prisma
     working_dir: /app/services/atomic/post-service
@@ -468,6 +481,7 @@ services:
       - REDIS_URL=redis://redis:6379
     networks:
       - mappalette-network
+      - ghost_network
     volumes:
       - ./backend/shared:/app/shared:ro
       - prisma-client-data:/app/node_modules/.prisma
@@ -496,6 +510,7 @@ services:
       - REDIS_URL=redis://redis:6379
     networks:
       - mappalette-network
+      - ghost_network
     volumes:
       - ./backend/shared:/app/shared:ro
       - prisma-client-data:/app/node_modules/.prisma
@@ -538,6 +553,7 @@ services:
       - FOLLOW_SERVICE_URL=http://follow-service:5000
     networks:
       - mappalette-network
+      - ghost_network
     volumes:
       - ./backend/shared:/app/shared:ro
       - prisma-client-data:/app/node_modules/.prisma
@@ -572,6 +588,7 @@ services:
       - FOLLOW_SERVICE_URL=http://follow-service:5000
     networks:
       - mappalette-network
+      - ghost_network
     volumes:
       - ./backend/shared:/app/shared:ro
       - prisma-client-data:/app/node_modules/.prisma
@@ -607,6 +624,7 @@ services:
       - INTERNAL_SERVICE_KEY=${INTERNAL_SERVICE_KEY}
     networks:
       - mappalette-network
+      - ghost_network
     volumes:
       - ./backend/shared:/app/shared:ro
       - prisma-client-data:/app/node_modules/.prisma
@@ -640,6 +658,7 @@ services:
       - INTERACTION_SERVICE_URL=http://interaction-service:5000
     networks:
       - mappalette-network
+      - ghost_network
     volumes:
       - ./backend/shared:/app/shared:ro
       - prisma-client-data:/app/node_modules/.prisma
@@ -663,6 +682,7 @@ services:
       - USER_SERVICE_URL=http://user-service:5000
     networks:
       - mappalette-network
+      - ghost_network
     volumes:
       - prisma-client-data:/app/node_modules/.prisma
 
@@ -692,6 +712,7 @@ services:
       - FOLLOW_SERVICE_URL=http://follow-service:5000
     networks:
       - mappalette-network
+      - ghost_network
     volumes:
       - prisma-client-data:/app/node_modules/.prisma
 
@@ -750,6 +771,7 @@ services:
       - "${FRONTEND_PORT:-3000}:80"
     networks:
       - mappalette-network
+      - ghost_network
 
   # ====================
   # REVERSE PROXY
@@ -774,6 +796,7 @@ services:
       - caddy-logs:/var/log/caddy
     networks:
       - mappalette-network
+      - ghost_network
     depends_on:
       - frontend
       - feed-service
@@ -782,6 +805,8 @@ networks:
   mappalette-network:
     name: mappalette-network
     driver: bridge
+  ghost_network:
+    external: true
 
 volumes:
   supabase-db-data:
