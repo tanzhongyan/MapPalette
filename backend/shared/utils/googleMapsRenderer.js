@@ -181,8 +181,12 @@ const fetchMapImage = async (url) => {
     // Check if response is an error (Google returns JSON for errors)
     const contentType = response.headers['content-type'];
     if (contentType && contentType.includes('application/json')) {
-      const errorData = JSON.parse(response.data.toString());
-      throw new Error(`Google Maps API error: ${errorData.error_message || 'Unknown error'}`);
+      try {
+        const errorData = JSON.parse(response.data.toString());
+        throw new Error(`Google Maps API error: ${errorData.error_message || 'Unknown error'}`);
+      } catch (parseError) {
+        throw new Error(`Google Maps API error: Unable to parse response - ${response.status}`);
+      }
     }
 
     return Buffer.from(response.data);
@@ -309,12 +313,25 @@ const renderMapFromPost = async (post) => {
     try {
       waypoints = JSON.parse(waypoints);
     } catch (error) {
-      throw new Error('Invalid waypoints JSON');
+      throw new Error('Invalid waypoints JSON: ' + error.message);
     }
   }
 
-  if (!Array.isArray(waypoints) || waypoints.length < 2) {
+  // Validate waypoints structure
+  if (!Array.isArray(waypoints)) {
+    throw new Error('Waypoints must be an array');
+  }
+  
+  if (waypoints.length < 2) {
     throw new Error('Post must have at least 2 waypoints');
+  }
+
+  // Validate each waypoint has required coordinates
+  for (let i = 0; i < waypoints.length; i++) {
+    const wp = waypoints[i];
+    if (typeof wp.lat !== 'number' || typeof wp.lng !== 'number') {
+      throw new Error(`Waypoint ${i} missing or invalid lat/lng coordinates`);
+    }
   }
 
   // Validate waypoints

@@ -150,13 +150,25 @@ queues.imageProcessing.process('render-map-image', async (job) => {
     // Render map using Google Maps Static API (returns 3 sizes: thumbnail, medium, large)
     const mapImages = await renderMapFromPost(post);
 
+    // Parse waypoints safely
+    let waypointCount = 0;
+    try {
+      const parsedWaypoints = typeof post.waypoints === 'string' 
+        ? JSON.parse(post.waypoints) 
+        : post.waypoints;
+      waypointCount = Array.isArray(parsedWaypoints) ? parsedWaypoints.length : 0;
+    } catch (error) {
+      console.error('[QUEUE] Failed to parse waypoints for post', postId, error);
+      waypointCount = 0;
+    }
+
     // Upload all sizes to storage
     const uploadResult = await uploadRouteImage(
       mapImages.large,
       userId,
       postId,
       {
-        waypointCount: JSON.parse(post.waypoints).length,
+        waypointCount: waypointCount,
         color: post.color,
         region: post.region,
         renderedAsync: true,

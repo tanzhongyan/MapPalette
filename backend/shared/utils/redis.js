@@ -34,7 +34,15 @@ const cache = {
     if (!client) return null;
     try {
       const value = await client.get(key);
-      return value ? JSON.parse(value) : null;
+      if (!value) return null;
+      
+      try {
+        return JSON.parse(value);
+      } catch (parseError) {
+        console.error(`[REDIS] JSON parse error for ${key}:`, parseError.message);
+        // Return null for corrupted cached data
+        return null;
+      }
     } catch (error) {
       console.error(`[REDIS] Get error for ${key}:`, error);
       return null;

@@ -81,7 +81,25 @@ const createPost = async (req, res) => {
         console.log(`[CREATE_POST] Generating map image for post ${post.id}`);
 
         // Calculate hash for caching
-        const parsedWaypoints = JSON.parse(waypoints);
+        let parsedWaypoints;
+        try {
+          parsedWaypoints = JSON.parse(waypoints);
+          
+          // Validate waypoints structure
+          if (!Array.isArray(parsedWaypoints)) {
+            throw new Error('Waypoints must be an array');
+          }
+          
+          parsedWaypoints.forEach((wp, idx) => {
+            if (typeof wp.lat !== 'number' || typeof wp.lng !== 'number') {
+              throw new Error(`Waypoint ${idx} missing or invalid coordinates`);
+            }
+          });
+        } catch (parseError) {
+          console.error(`[CREATE_POST] Invalid waypoints format: ${parseError.message}`);
+          throw parseError;
+        }
+        
         const waypointsHash = calculateWaypointsHash(parsedWaypoints, post.color);
         const cacheKey = `map:${waypointsHash}`;
 
