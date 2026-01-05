@@ -13,6 +13,9 @@ const app = express();
 const PORT = process.env.PORT || 3008;
 const startTime = Date.now();
 
+// Trust proxy - required for rate limiting behind reverse proxy
+app.set('trust proxy', true);
+
 // Middleware
 app.use(cors({ origin: true, allowedHeaders: ['Content-Type', 'Authorization', 'x-supabase-api-version', 'apikey', 'x-client-info'] }));
 app.use(compression());

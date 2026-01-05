@@ -23,6 +23,9 @@ const swagger = createSwaggerConfig({
 const app = express();
 const startTime = Date.now();
 
+// Trust proxy - required for rate limiting behind reverse proxy
+app.set('trust proxy', true);
+
 // Middleware
 app.use(requestId);
 app.use(httpLogger);
